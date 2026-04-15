@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>About FYR - fyr-family.site</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="FYR emblem.png" />
+  <link rel="shortcut icon" type="image/png" href="FYR emblem.png" />
+  <style>
+    :root {
+      --bg: #0b0c0d;
+      --card: #151a1a;
+      
+      /* Theme Colors matching index.html */
+      --accent-teal: #4A8E95;
+      --accent-teal-rgb: 74, 142, 149;
+      --accent-olive: #5D683E;
+      --accent-olive-rgb: 93, 104, 62;
+      --accent-gray: #707276;
+      --accent-gray-rgb: 112, 114, 118;
+      
+      --accent: var(--accent-teal);
+      --accent-glow: rgba(var(--accent-teal-rgb), 0.35);
+      --text-main: #eef1ff;
+      --text-muted: #a3a6ad;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --radius-lg: 16px;
+      --radius-full: 999px;
+      --shadow-soft: 0 20px 48px rgba(0, 0, 0, 0.5);
+      --transition-fast: 160ms ease-out;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 32px 16px;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: url("images/background .png") center / cover no-repeat;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse 100% 70% at 50% -10%, rgba(var(--accent-teal-rgb), 0.25), transparent 52%),
+        radial-gradient(ellipse 80% 50% at 100% 50%, rgba(var(--accent-olive-rgb), 0.20), transparent 45%),
+        linear-gradient(180deg, rgba(11, 12, 13, 0.6) 0%, rgba(11, 12, 13, 0.75) 42%, rgba(8, 9, 10, 0.85) 100%);
+      pointer-events: none;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 960px;
+      background: linear-gradient(
+        155deg,
+        rgba(var(--accent-gray-rgb), 0.15) 0%,
+        rgba(15, 18, 18, 0.6) 42%,
+        rgba(10, 12, 12, 0.7) 100%
+      );
+      backdrop-filter: blur(18px) saturate(1.12);
+      -webkit-backdrop-filter: blur(18px) saturate(1.12);
+      border-radius: 24px;
+      padding: 24px 20px 26px;
+      box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(var(--accent-teal-rgb), 0.15);
+      position: relative;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .page::before,
+    .page::after {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-glow), transparent 62%);
+      filter: blur(12px);
+      opacity: 0.45;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .page::before { top: -90px; right: -70px; background: radial-gradient(circle, rgba(var(--accent-teal-rgb), 0.35), transparent 62%); }
+    .page::after { bottom: -110px; left: -50px; background: radial-gradient(circle, rgba(var(--accent-olive-rgb), 0.35), transparent 62%); }
+
+    .page > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .brand h1 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-main);
+      margin: 0;
+    }
+
+    .brand p {
+      font-size: 13px;
+      color: var(--accent-teal);
+      margin: 0;
+      font-weight: 500;
+    }
+
+    .back-link a {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 6px 14px;
+      background: rgba(20, 24, 24, 0.6);
+      transition: all var(--transition-fast);
+    }
+
+    .back-link a:hover {
+      color: var(--accent-teal);
+      border-color: var(--accent-teal);
+      background: rgba(var(--accent-teal-rgb), 0.1);
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(var(--accent-teal-rgb), 0.3), transparent);
+      margin-bottom: 18px;
+    }
+
+    section {
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    h3 {
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: var(--accent-teal);
+    }
+
+    .card {
+      background: linear-gradient(165deg, rgba(var(--accent-gray-rgb), 0.1) 0%, rgba(15, 18, 18, 0.7) 100%);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: var(--radius-lg);
+      padding: 16px 14px;
+      border: 1px solid rgba(var(--accent-teal-rgb), 0.2);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      font-size: 13px;
+      color: var(--text-main);
+    }
+
+    .card + .card {
+      margin-top: 10px;
+    }
+
+    p { margin-bottom: 8px; line-height: 1.5; }
+
+    ul {
+      padding-left: 18px;
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    li { margin-bottom: 4px; }
+
+    .highlight {
+      color: var(--accent-teal);
+      font-weight: 600;
+    }
+
+    .requirements-intro {
+      font-size: 14px;
+    }
+
+    footer {
+      margin-top: 18px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    @media (max-width: 520px) {
+      body { padding: 16px; }
+      .page { padding: 20px 16px; }
+      header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="brand">
+        <h1>About FYR</h1>
+        <p>Stronger together. Growing together.</p>
+      </div>
+      <div class="back-link">
+        <a href="/">← Back to tools</a>
+      </div>
+    </header>
+
+    <div class="divider"></div>
+
+    <section>
+      <h2>About us</h2>
+      <div class="card">
+        <p>
+          <span class="highlight">FYR</span> is more than just a group of clans -
+          we are a structured, supportive, and family-friendly community focused on teamwork
+          and long-term growth.
+        </p>
+        <p class="highlight">
+          It's all about teamwork and having fun
+        </p>
+
+        <p>Our clans:</p>
+        <ul>
+          <li><strong>[FYR] Drakarys</strong></li>
+          <li><strong>[FYR] Legacy of Fire</strong></li>
+          <li><strong>[FYR] First Yeoman Academy</strong></li>
+        </ul>
+
+        <p>
+          Together, we provide an environment where players of different levels can develop,
+          compete, and enjoy the game as one united family.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Our core values</h2>
+      <div class="card">
+        <p><strong>Fun</strong> - The main reason we play. Without it, nothing else works.</p>
+        <p><strong>Growth</strong> - Learning and improving keeps us motivated.</p>
+        <p><strong>Community</strong> - Real people, teamwork, and mutual support define us.</p>
+        <p><strong>Respect</strong> - Tolerance, understanding, and fair treatment are essential.</p>
+        <p><strong>Sustainability</strong> - We plan ahead and adapt so our clan stays strong long-term.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Clan requirements</h2>
+      <div class="card">
+        <p class="requirements-intro">
+          Every clan member should follow our core values, support other players,
+          and avoid drama and toxic behavior.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>1. Weekly chest points</h3>
+        <ul>
+          <li>Collect minimum chest points every week</li>
+          <li>Points can be earned by exploring crypts or killing epics</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>2. Ancients Tournament event</h3>
+        <ul>
+          <li>Vaults are mandatory</li>
+          <li>Full participation required</li>
+          <li>Minimum points based on G/S/M level</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>3. Trials of Olympus event</h3>
+        <ul>
+          <li>Collect personal rewards every day</li>
+          <li>Lava Fountains and Explore Tartaros Crypts on days 3 and 4 are mandatory</li>
+          <li>Buy all Hermes chests</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>4. Dark Omens event</h3>
+        <ul>
+          <li>Attack Acronomancer to collect all personal rewards</li>
+          <li>Follow leadership instructions for summons and essence usage</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>5. Ragnarok event</h3>
+        <ul>
+          <li>Buy all Jörmungandr chests</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Join us</h2>
+      <div class="card">
+        <p>
+          Join FYR if you're looking for an active and organised team where we grow stronger together.
+        </p>
+        <p class="highlight">
+          We don't just grow accounts. We grow together.
+        </p>
+      </div>
+    </section>
+
+    <footer>
+      © 2026 FYR &bull; fyr-family.site
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+# FYR — fyr-family.site
+# Clean URLs: no .html in address bar, index.html as homepage
+
+# Use index.html as default when visiting a directory
+DirectoryIndex index.html
+
+# Enable rewrite engine
+RewriteEngine On
+RewriteBase /
+
+# Redirect /index.html to / (clean homepage URL)
+RewriteCond %{THE_REQUEST} /index\.html [NC]
+RewriteRule ^index\.html$ / [R=301,L]
+
+# Redirect /about.html to /about
+RewriteCond %{THE_REQUEST} /about\.html [NC]
+RewriteRule ^about\.html$ /about [R=301,L]
+
+# Serve about.html when user requests /about
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^about$ about.html [L]
+
+﻿# Short links: /FYR and /LOF → external chest trackers
+RewriteRule ^FYR/?$ https://tbclanportal.com/public/crypt/JU2Ft6bb [R=302,L]
+RewriteRule ^LOF/?$ https://tbclanportal.com/public/crypt/6j2z0RbI [R=302,L]
