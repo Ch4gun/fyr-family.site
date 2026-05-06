@@ -697,21 +697,26 @@
       if (clanEventsListEl) {
       const EVENT_ICS_REL_URL = "tb-events.ics"; 
       const OLYMPUS_DAY_META = {
-        1: { title: "Trials of Olympus - Chimera", requirements: ["Join raids, complete as personal goals as you can"] },
-        2: { title: "Trials of Olympus - Basilisk", requirements: ["Hit with hero, complete ALL personal goals to collect additional fountain"] },
-        3: { title: "Trials of Olympus - Lava Fountains", requirements: ["Build and collect all lava fountains, ideally at the beginning of the event"] },
-        4: { title: "Trials of Olympus - Tartaros", requirements: ["Explore Tartaros crypts to collect as many personal goals as you can"] },
+        1: { title: "Trials of Olympus - Chimera", requirements: ["Join raids and complete as many personal goals as you can"] },
+        2: { title: "Trials of Olympus - Basilisk", requirements: ["Hit with hero", "Complete all personal goals to collect the additional fountain"] },
+        3: { title: "Trials of Olympus - Lava Fountains", requirements: ["Build and collect all lava fountains — ideally at the start of the day"] },
+        4: { title: "Trials of Olympus - Tartaros", requirements: ["Explore Tartaros crypts and collect as many personal goals as you can"] },
         5: { title: "Trials of Olympus - Briareus", requirements: ["Hit Briareus to collect personal goals"] }
       };
 
       const DARK_OMENS_DAY_META = {
-        1: { title: "Dark Omens", dayLabel: "Day 1/2", requirements: ["Attack Acronomancer", "Collect ALL personal rewards", "Only act on instruction"] },
-        2: { title: "Dark Omens", dayLabel: "Day 2/2", requirements: ["Attack Acronomancer", "Collect ALL personal rewards", "Only act on instruction"] }
+        1: { title: "Dark Omens", dayLabel: "Day 1/2", requirements: ["Attack Acronomancer", "Collect all personal rewards", "Wait for leadership instructions before using summons or essence"] },
+        2: { title: "Dark Omens", dayLabel: "Day 2/2", requirements: ["Attack Acronomancer", "Collect all personal rewards", "Wait for leadership instructions before using summons or essence"] }
+      };
+
+      const RAGNAROK_DAY_META = {
+        1: { title: "Ragnarök", dayLabel: "Day 1/2", requirements: ["Buy all Jörmungandr's Chests", "Only the raid leader may use speed-ups on the march", "Attack only as a full group of 5 members"] },
+        2: { title: "Ragnarök", dayLabel: "Day 2/2", requirements: ["Buy all Jörmungandr's Chests", "Only the raid leader may use speed-ups on the march", "Attack only as a full group of 5 members"] }
       };
 
       const SINGLE_META = {
         rise: { title: "Rise of the Ancients", requirements: ["Hit TinMan until you reach the required points as announced in-game (based on your G/S/M levels)"] },
-        treasure: { title: "Ancients' Treasure", requirements: ["Build vault and post coordinates in vaults chat in game"] }
+        treasure: { title: "Ancients' Treasure", requirements: ["Build your vault and post the coordinates in the vaults chat in-game"] }
       };
 
       const FALLBACK_EVENT_DATA = {
@@ -730,6 +735,10 @@
         ],
         darkOmens: [
           { days: [ { day: 1, start: "2026-04-12T17:00:00Z", end: "2026-04-13T17:00:00Z" }, { day: 2, start: "2026-04-13T17:00:00Z", end: "2026-04-14T17:00:00Z" } ] }
+        ],
+        ragnarok: [
+          { days: [ { day: 1, start: "2026-04-27T17:00:00Z", end: "2026-04-28T17:00:00Z" }, { day: 2, start: "2026-04-28T17:00:00Z", end: "2026-04-29T17:00:00Z" } ] },
+          { days: [ { day: 1, start: "2026-05-21T17:00:00Z", end: "2026-05-22T17:00:00Z" }, { day: 2, start: "2026-05-22T17:00:00Z", end: "2026-05-23T17:00:00Z" } ] }
         ]
       };
 
@@ -755,6 +764,7 @@
         const singleEvents = [];
         const olympusByStartMs = new Map();
         const darkByStartMs = new Map();
+        const ragnarokByStartMs = new Map();
 
         for (const block of veventBlocks) {
           const endIdx = block.indexOf("END:VEVENT");
@@ -793,13 +803,23 @@
             group.days.set(day, { day, start: dtStart.toISOString(), end: dtEnd.toISOString() });
             darkByStartMs.set(groupStartMs, group); continue;
           }
+          if (summary.includes("Ragnar")) {
+            const dayMatch = /Day\s*(\d+)\s*\/\s*2/i.exec(summary);
+            const day = dayMatch ? Number(dayMatch[1]) : null;
+            if (!day || day < 1 || day > 2) continue;
+            const groupStartMs = dtStart.getTime() - (day - 1) * 86400000;
+            const group = ragnarokByStartMs.get(groupStartMs) || { days: new Map() };
+            group.days.set(day, { day, start: dtStart.toISOString(), end: dtEnd.toISOString() });
+            ragnarokByStartMs.set(groupStartMs, group); continue;
+          }
         }
 
         const olympus = Array.from(olympusByStartMs.entries()).sort((a, b) => a[0] - b[0]).map(([, group]) => ({ days: [1, 2, 3, 4, 5].map((d) => group.days.get(d)).filter(Boolean) })).filter(g => g.days.length);
         const darkOmens = Array.from(darkByStartMs.entries()).sort((a, b) => a[0] - b[0]).map(([, group]) => ({ days: [1, 2].map((d) => group.days.get(d)).filter(Boolean) })).filter(g => g.days.length);
+        const ragnarok = Array.from(ragnarokByStartMs.entries()).sort((a, b) => a[0] - b[0]).map(([, group]) => ({ days: [1, 2].map((d) => group.days.get(d)).filter(Boolean) })).filter(g => g.days.length);
         singleEvents.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
 
-        return { singles: singleEvents, olympus, darkOmens };
+        return { singles: singleEvents, olympus, darkOmens, ragnarok };
       }
 
       function getActiveDayIndex(nowMs, days) {
@@ -822,6 +842,10 @@
         for (const d of (eventData.darkOmens || [])) {
           const days = (d.days || []).slice().sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
           if (days.length) candidates.push({ type: "multi", subtype: "dark", days: days.map(x => ({ day: x.day, startMs: new Date(x.start).getTime(), endMs: new Date(x.end).getTime() })) });
+        }
+        for (const r of (eventData.ragnarok || [])) {
+          const days = (r.days || []).slice().sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+          if (days.length) candidates.push({ type: "multi", subtype: "ragnarok", days: days.map(x => ({ day: x.day, startMs: new Date(x.start).getTime(), endMs: new Date(x.end).getTime() })) });
         }
         return candidates;
       }
@@ -877,7 +901,6 @@
           const card = document.createElement("div");
           card.className = "clan-event-card";
 
-          // If the event is active (live NOW), enlarge it and highlight it
           if (item.isActive) {
             card.classList.add("event-card--active");
           }
@@ -919,6 +942,17 @@
             } else {
               titleEl.textContent = "Dark Omens";
               requirements = DARK_OMENS_DAY_META[1] ? DARK_OMENS_DAY_META[1].requirements : [];
+              countdownStartMs = (c.days.find(d => d.day === 1) || c.days[0]).startMs;
+            }
+          } else if (c.subtype === "ragnarok") {
+            if (item.isActive) {
+              const meta = RAGNAROK_DAY_META[c.days[item.activeIdx].day];
+              titleEl.textContent = meta.title;
+              dayEl.textContent = meta.dayLabel;
+              requirements = meta.requirements;
+            } else {
+              titleEl.textContent = "Ragnarök";
+              requirements = RAGNAROK_DAY_META[1].requirements;
               countdownStartMs = (c.days.find(d => d.day === 1) || c.days[0]).startMs;
             }
           }
